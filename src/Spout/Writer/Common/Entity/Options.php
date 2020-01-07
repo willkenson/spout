@@ -19,5 +19,9 @@ abstract class Options
     const SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY = 'shouldCreateNewSheetsAutomatically';
 
     // XLSX specific options
-    const SHOULD_USE_INLINE_STRINGS = 'shouldUseInlineStrings';
+    const SHOULD_USE_INLINE_STRINGS = 'shouldUseInlineStrings';    // Cell size options
+
+    const DEFAULT_COLUMN_WIDTH = 'defaultColumnWidth';
+    const DEFAULT_ROW_HEIGHT = 'defaultRowHeight';
+    const COLUMN_WIDTHS = 'columnWidthDefinition';
 }
