@@ -1,3 +1,6 @@
+A fork to make spout not useless...
+
+
 # Spout
 
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
