@@ -49,6 +49,11 @@ class Sheet implements SheetInterface
         return $this->rowIterator;
     }
 
+    public function getMappedRowIterator() : MappedRowIterator
+    {
+        return new MappedRowIterator($this->rowIterator);
+    }
+
     /**
      * @return int Index of the sheet, based on order in the workbook (zero-based)
      */
