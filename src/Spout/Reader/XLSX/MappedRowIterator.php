@@ -24,7 +24,7 @@ class MappedRowIterator implements IteratorInterface
     protected array|null $headers = null;
     protected array|null $map = null;
 
-    protected function sanitize(string|int|null $value) : string|int|null
+    protected function sanitize(string|int|float|null $value) : string|int|float|null
     {
         if (!is_string($value)) {
             return $value;
@@ -127,7 +127,7 @@ class MappedRowIterator implements IteratorInterface
     {
         $row = $this->iterator->current();
         $row = $this->mapRow($row->toArray());
-        $sanitized = array_map(fn(string|int|null $value) => $this->sanitize($value), $row);
+        $sanitized = array_map(fn(string|int|float|null $value) => $this->sanitize($value), $row);
         return (object)$sanitized;
     }
 

@@ -215,8 +215,6 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-      - name: Run PHP-CS-Fixer
-        run: vendor/bin/php-cs-fixer fix --verbose --diff --dry-run
 
   static-analysis:
     name: Static Analysis

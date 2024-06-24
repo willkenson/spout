@@ -4,5 +4,4 @@
 /tests/resources/generated
 /tests/coverage
 /vendor
-/.php-cs-fixer.cache
 /.phpunit.result.cache
