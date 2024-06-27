@@ -237,6 +237,7 @@ EOD;
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
+        $this->hasWrittenRows = true;
     }
 
     /**
@@ -355,7 +356,9 @@ EOD;
             return;
         }
 
-        \fwrite($worksheetFilePointer, '</sheetData>');
+        if ($this->hasWrittenRows) {
+            \fwrite($worksheetFilePointer, '</sheetData>');
+        }
         \fwrite($worksheetFilePointer, '</worksheet>');
         \fclose($worksheetFilePointer);
     }
