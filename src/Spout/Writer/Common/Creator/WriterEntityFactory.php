@@ -30,7 +30,7 @@ class WriterEntityFactory
     /**
      * This creates an instance of the appropriate writer, given the extension of the file to be written
      *
-     * @param string $path The path to the spreadsheet file. Supported extensions are .csv, .ods and .xlsx
+     * @param string $path The path to the spreadsheet file. Supported extensions are .csv, and .xlsx
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return WriterInterface
      */
@@ -63,21 +63,6 @@ class WriterEntityFactory
     {
         try {
             return WriterFactory::createFromType(Type::XLSX);
-        } catch (UnsupportedTypeException $e) {
-            // should never happen
-            return null;
-        }
-    }
-
-    /**
-     * This creates an instance of a ODS writer
-     *
-     * @return \Box\Spout\Writer\ODS\Writer
-     */
-    public static function createODSWriter()
-    {
-        try {
-            return WriterFactory::createFromType(Type::ODS);
         } catch (UnsupportedTypeException $e) {
             // should never happen
             return null;

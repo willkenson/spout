@@ -71,6 +71,16 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
         }
     }
 
+    public function setDefaultColumnWidth(float $width)
+    {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setDefaultColumnWidth($width);
+    }
+    public function setColumnWidth($width, ...$columns)
+    {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setColumnWidth($width, ...$columns);
+    }
     /**
      * Returns all the workbook's sheets
      *

@@ -35,7 +35,7 @@ class WorksheetManager implements WorksheetManagerInterface
 
     public const SHEET_XML_FILE_HEADER = <<<'EOD'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 EOD;
 
     /** @var bool Whether inline or shared strings should be used */
@@ -62,7 +62,6 @@ EOD;
     private $columnWidths = [];
     private $defaultColumnWidth;
 
-    private $hasWrittenRows = false;
 
     /**
      * WorksheetManager constructor.
@@ -144,8 +143,7 @@ EOD;
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
         $worksheet->setFilePointer($sheetFilePointer);
-
-        \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        $this->writeLog($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
         //\fwrite($sheetFilePointer, '<sheetData>');
     }
 
@@ -195,8 +193,14 @@ EOD;
             return '';
         }
         // Ensure that the required defaultRowHeight is set
-       // $rowHeightXml = empty($rowHeightXml) ? ' defaultRowHeight="0"' : $rowHeightXml;
+        // $rowHeightXml = empty($rowHeightXml) ? ' defaultRowHeight="0"' : $rowHeightXml;
         return "<sheetFormatPr{$colWidthXml}/>";
+    }
+
+    protected function writeLog($pointer, string $data) : int|false
+    {
+        //debug($data);
+        return \fwrite($pointer, $data);
     }
 
     /**
@@ -211,10 +215,10 @@ EOD;
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
         $sheetFilePointer = $worksheet->getFilePointer();
-        if (!$this->hasWrittenRows) {
-            fwrite($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
-            fwrite($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
-            fwrite($sheetFilePointer, '<sheetData>');
+        if (empty($worksheet->getLastWrittenRowIndex())) {
+            $this->writeLog($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
+            $this->writeLog($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
+            $this->writeLog($sheetFilePointer, '<sheetData>');
         }
         $rowStyle = $row->getStyle();
         $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
@@ -233,11 +237,10 @@ EOD;
 
         $rowXML .= '</row>';
 
-        $wasWriteSuccessful = \fwrite($sheetFilePointer, $rowXML);
+        $wasWriteSuccessful = $this->writeLog($sheetFilePointer, $rowXML);
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
-        $this->hasWrittenRows = true;
     }
 
     /**
@@ -356,10 +359,10 @@ EOD;
             return;
         }
 
-        if ($this->hasWrittenRows) {
-            \fwrite($worksheetFilePointer, '</sheetData>');
+        if (!empty($worksheet->getLastWrittenRowIndex())) {
+            $this->writeLog($worksheetFilePointer, '</sheetData>');
         }
-        \fwrite($worksheetFilePointer, '</worksheet>');
+        $this->writeLog($worksheetFilePointer, '</worksheet>');
         \fclose($worksheetFilePointer);
     }
 }

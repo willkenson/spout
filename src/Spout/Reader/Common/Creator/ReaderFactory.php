@@ -8,11 +8,6 @@ use Box\Spout\Common\Type;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory as CSVInternalEntityFactory;
 use Box\Spout\Reader\CSV\Manager\OptionsManager as CSVOptionsManager;
 use Box\Spout\Reader\CSV\Reader as CSVReader;
-use Box\Spout\Reader\ODS\Creator\HelperFactory as ODSHelperFactory;
-use Box\Spout\Reader\ODS\Creator\InternalEntityFactory as ODSInternalEntityFactory;
-use Box\Spout\Reader\ODS\Creator\ManagerFactory as ODSManagerFactory;
-use Box\Spout\Reader\ODS\Manager\OptionsManager as ODSOptionsManager;
-use Box\Spout\Reader\ODS\Reader as ODSReader;
 use Box\Spout\Reader\ReaderInterface;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory as XLSXHelperFactory;
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory as XLSXInternalEntityFactory;
@@ -24,14 +19,14 @@ use Box\Spout\Reader\XLSX\Reader as XLSXReader;
 /**
  * Class ReaderFactory
  * This factory is used to create readers, based on the type of the file to be read.
- * It supports CSV, XLSX and ODS formats.
+ * It supports CSV, XLSX formats.
  */
 class ReaderFactory
 {
     /**
      * Creates a reader by file extension
      *
-     * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
+     * @param string $path The path to the spreadsheet file. Supported extensions are .csv and .xlsx
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return ReaderInterface
      */
@@ -54,7 +49,7 @@ class ReaderFactory
         switch ($readerType) {
             case Type::CSV: return self::createCSVReader();
             case Type::XLSX: return self::createXLSXReader();
-            case Type::ODS: return self::createODSReader();
+
             default:
                 throw new UnsupportedTypeException('No readers supporting the given type: ' . $readerType);
         }
@@ -87,17 +82,4 @@ class ReaderFactory
         return new XLSXReader($optionsManager, $globalFunctionsHelper, $entityFactory, $managerFactory);
     }
 
-    /**
-     * @return ODSReader
-     */
-    private static function createODSReader()
-    {
-        $optionsManager = new ODSOptionsManager();
-        $helperFactory = new ODSHelperFactory();
-        $managerFactory = new ODSManagerFactory();
-        $entityFactory = new ODSInternalEntityFactory($helperFactory, $managerFactory);
-        $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
-
-        return new ODSReader($optionsManager, $globalFunctionsHelper, $entityFactory);
-    }
 }

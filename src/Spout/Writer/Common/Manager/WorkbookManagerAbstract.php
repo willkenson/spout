@@ -226,8 +226,6 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
 
                 $this->addRowToWorksheet($currentWorksheet, $row);
-            } else {
-                // otherwise, do nothing as the data won't be written anyways
             }
         } else {
             $this->addRowToWorksheet($currentWorksheet, $row);
@@ -290,6 +288,11 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         $this->closeRemainingObjects();
         $this->writeAllFilesToDiskAndZipThem($finalFilePointer);
         $this->cleanupTempFolder();
+    }
+
+    public function setColumnWidth(float $width, ...$columns)
+    {
+        $this->worksheetManager->setColumnWidth($width, ...$columns);
     }
 
     /**
