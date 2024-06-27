@@ -20,4 +20,6 @@ abstract class Options
 
     // XLSX specific options
     public const SHOULD_USE_INLINE_STRINGS = 'shouldUseInlineStrings';
+    public const DEFAULT_COLUMN_WIDTH = 'defaultColumnWidth';
+    public const COLUMN_WIDTHS = 'columnWidthDefinition';
 }
