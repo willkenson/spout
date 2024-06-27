@@ -89,7 +89,7 @@ class XMLProcessor
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException
      * @return void
      */
-    public function readUntilStopped()
+    public function readUntilStopped(string $stopAtNode = null)
     {
         while ($this->xmlReader->read()) {
             $nodeType = $this->xmlReader->nodeType;
@@ -105,8 +105,24 @@ class XMLProcessor
                     // stop reading
                     break;
                 }
+                if ($nodeType === self::NODE_TYPE_START && ($nodeNamePossiblyWithPrefix === $stopAtNode)) {
+                    break;
+                }
             }
         }
+    }
+
+    public function readCount($nodeName)
+    {
+        $totalRows = 0;
+        while ($this->xmlReader->read()) {
+            $nodeType = $this->xmlReader->nodeType;
+            $name = $this->xmlReader->localName;
+            if (($nodeType === self::NODE_TYPE_START) && ($name === $nodeName)) {
+                $totalRows++;
+            }
+        }
+        return $totalRows;
     }
 
     /**

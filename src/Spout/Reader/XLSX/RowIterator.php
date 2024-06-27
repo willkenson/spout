@@ -71,6 +71,8 @@ class RowIterator implements IteratorInterface
     /** @var int The number of columns the sheet has (0 meaning undefined) */
     protected $numColumns = 0;
 
+    protected $numRows = null;
+
     /** @var bool Whether empty rows should be returned or skipped */
     protected $shouldPreserveEmptyRows;
 
@@ -183,6 +185,20 @@ class RowIterator implements IteratorInterface
         if ($this->doesNeedDataForNextRowToBeProcessed()) {
             $this->readDataForNextRow();
         }
+    }
+
+    public function getNumRows() : ?int
+    {
+        if (!is_null($this->numRows)) {
+            return $this->numRows;
+        }
+        $this->rewind();
+        $this->xmlProcessor->readUntilStopped(self::XML_NODE_DIMENSION);
+        if (is_null($this->numRows)) {
+            $this->numRows = $this->xmlProcessor->readCount(self::XML_NODE_ROW);
+        }
+        $this->rewind();
+        return $this->numRows;
     }
 
     /**
