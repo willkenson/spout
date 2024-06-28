@@ -290,20 +290,6 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         $this->cleanupTempFolder();
     }
 
-    public function setDefaultColumnWidth(float $width)
-    {
-        $this->worksheetManager->setDefaultColumnWidth($width);
-    }
-    public function setColumnWidth(float $width, $columns)
-    {
-        $this->worksheetManager->setColumnWidth($width, $columns);
-    }
-
-    public function setColumnWidths(float $width, ...$columns)
-    {
-        $this->worksheetManager->setColumnWidth($width, ...$columns);
-    }
-
     /**
      * Closes custom objects that are still opened
      *

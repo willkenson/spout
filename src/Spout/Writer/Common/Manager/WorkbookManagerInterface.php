@@ -29,7 +29,6 @@ interface WorkbookManagerInterface
      * @return Worksheet The created sheet
      */
     public function addNewSheetAndMakeItCurrent();
-    public function setDefaultColumnWidth(float $width);
     /**
      * @return Worksheet[] All the workbook's sheets
      */

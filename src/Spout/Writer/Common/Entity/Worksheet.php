@@ -23,6 +23,8 @@ class Worksheet
     /** @var int Index of the last written row */
     private $lastWrittenRowIndex;
 
+    private $columnWidths = [];
+    private $defaultColumnWidth;
     /**
      * Worksheet constructor.
      *
@@ -38,6 +40,38 @@ class Worksheet
         $this->lastWrittenRowIndex = 0;
     }
 
+    public function setDefaultColumnWidth($width)
+    {
+        $this->defaultColumnWidth = $width;
+    }
+    public function setColumnWidth(int $column, float $width) {
+        $this->columnWidths[] = [$column, $width];
+    }
+
+    public function getXMLFragmentForDefaultCellSizing() : string
+    {
+        //$rowHeightXml = empty($this->defaultRowHeight) ? '' : " defaultRowHeight=\"{$this->defaultRowHeight}\"";
+        $colWidthXml = empty($this->defaultColumnWidth) ? '' : " defaultColWidth=\"{$this->defaultColumnWidth}\"";
+        if (empty($colWidthXml)) {
+            return '';
+        }
+        // Ensure that the required defaultRowHeight is set
+        // $rowHeightXml = empty($rowHeightXml) ? ' defaultRowHeight="0"' : $rowHeightXml;
+        return "<sheetFormatPr{$colWidthXml}/>";
+    }
+
+    public function getXMLFragmentForColumnWidths() : string
+    {
+        if (empty($this->columnWidths)) {
+            return '';
+        }
+        $xml = '<cols>';
+        foreach ($this->columnWidths as $entry) {
+            $xml .= '<col min="' . $entry[0] . '" max="' . $entry[1] . '" width="' . $entry[2] . '" customWidth="true"/>';
+        }
+        $xml .= '</cols>';
+        return $xml;
+    }
     /**
      * @return string
      */

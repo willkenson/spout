@@ -59,9 +59,6 @@ EOD;
     /** @var StringHelper String helper */
     private $stringHelper;
 
-    private $columnWidths = [];
-    private $defaultColumnWidth;
-
 
     /**
      * WorksheetManager constructor.
@@ -84,47 +81,12 @@ EOD;
         StringHelper $stringHelper
     ) {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
-        $this->setDefaultColumnWidth($optionsManager->getOption(Options::DEFAULT_COLUMN_WIDTH));
-        $this->columnWidths = $optionsManager->getOption(Options::COLUMN_WIDTHS) ?? [];
         $this->rowManager = $rowManager;
         $this->styleManager = $styleManager;
         $this->styleMerger = $styleMerger;
         $this->sharedStringsManager = $sharedStringsManager;
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
-    }
-    public function setDefaultColumnWidth($width)
-    {
-        $this->defaultColumnWidth = $width;
-    }
-    public function setColumnWidth(float $width, int $column) {
-        $this->columnWidths[] = [$column, $column, $width];
-    }
-    public function setColumnWidths(float $width, ...$columns)
-    {
-        // Gather sequences
-        $sequence = [];
-        foreach ($columns as $i) {
-            $sequenceLength = count($sequence);
-            if ($sequenceLength > 0) {
-                $previousValue = $sequence[$sequenceLength - 1];
-                if ($i !== $previousValue + 1) {
-                    $this->setColumnWidthForRange($width, $sequence[0], $previousValue);
-                    $sequence = [];
-                }
-            }
-            $sequence[] = $i;
-        }
-        $this->setColumnWidthForRange($width, $sequence[0], $sequence[count($sequence) - 1]);
-    }
-    /**
-     * @param float $width The width to set
-     * @param int $start First column index of the range
-     * @param int $end Last column index of the range
-     */
-    public function setColumnWidthForRange(float $width, int $start, int $end)
-    {
-        $this->columnWidths[] = [$start, $end, $width];
     }
     /**
      * @return SharedStringsManager
@@ -173,29 +135,6 @@ EOD;
         $worksheet->setLastWrittenRowIndex($worksheet->getLastWrittenRowIndex() + 1);
     }
 
-    public function getXMLFragmentForColumnWidths() : string
-    {
-        if (empty($this->columnWidths)) {
-            return '';
-        }
-        $xml = '<cols>';
-        foreach ($this->columnWidths as $entry) {
-            $xml .= '<col min="' . $entry[0] . '" max="' . $entry[1] . '" width="' . $entry[2] . '" customWidth="true"/>';
-        }
-        $xml .= '</cols>';
-        return $xml;
-    }
-    public function getXMLFragmentForDefaultCellSizing() : string
-    {
-        //$rowHeightXml = empty($this->defaultRowHeight) ? '' : " defaultRowHeight=\"{$this->defaultRowHeight}\"";
-        $colWidthXml = empty($this->defaultColumnWidth) ? '' : " defaultColWidth=\"{$this->defaultColumnWidth}\"";
-        if (empty($colWidthXml)) {
-            return '';
-        }
-        // Ensure that the required defaultRowHeight is set
-        // $rowHeightXml = empty($rowHeightXml) ? ' defaultRowHeight="0"' : $rowHeightXml;
-        return "<sheetFormatPr{$colWidthXml}/>";
-    }
 
     protected function writeLog($pointer, string $data) : int|false
     {
@@ -216,8 +155,8 @@ EOD;
     {
         $sheetFilePointer = $worksheet->getFilePointer();
         if (empty($worksheet->getLastWrittenRowIndex())) {
-            $this->writeLog($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
-            $this->writeLog($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
+            $this->writeLog($sheetFilePointer, $worksheet->getXMLFragmentForDefaultCellSizing());
+            $this->writeLog($sheetFilePointer, $worksheet->getXMLFragmentForColumnWidths());
             $this->writeLog($sheetFilePointer, '<sheetData>');
         }
         $rowStyle = $row->getStyle();
