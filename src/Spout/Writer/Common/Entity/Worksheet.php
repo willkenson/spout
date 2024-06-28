@@ -67,7 +67,7 @@ class Worksheet
         }
         $xml = '<cols>';
         foreach ($this->columnWidths as $entry) {
-            $xml .= '<col min="' . $entry[0] . '" max="' . $entry[1] . '" width="' . $entry[2] . '" customWidth="true"/>';
+            $xml .= '<col min="' . $entry[0] . '" max="' . $entry[0] . '" width="' . $entry[1] . '" customWidth="true"/>';
         }
         $xml .= '</cols>';
         return $xml;
